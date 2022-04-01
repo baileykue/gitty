@@ -15,9 +15,9 @@ describe('gitty routes', () => {
   });
 
   it('should redirect to the github oauth page upon login', async () => {
-    const req = await request(app).get('/api/v1/github/login');
+    const res = await request(app).get('/api/v1/github/login');
 
-    expect(req.header.location).toMatch(
+    expect(res.header.location).toMatch(
       /https:\/\/github.com\/login\/oauth\/authorize\?client_id=[\w\d]+&scope=user&redirect_uri=http:\/\/localhost:7890\/api\/v1\/github\/login\/callback/i
     );
   });
@@ -29,5 +29,17 @@ describe('gitty routes', () => {
       .redirects(1);
 
     expect(res.req.path).toEqual('/api/v1/posts');
+  });
+
+  it('should log out a user', async () => {
+    const agent = request.agent(app);
+
+    const login = await agent
+      .get('/api/v1/github/login/callback?code=42')
+      .redirects(1);
+    expect(login.req.path).toEqual('/api/v1/posts');
+
+    const logout = await agent.delete('/api/v1/github/logout');
+    expect(logout.body).toEqual({ message: 'you have been logged out' });
   });
 });
