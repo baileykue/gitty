@@ -54,4 +54,25 @@ describe('gitty routes', () => {
     res = await agent.get('/api/v1/posts');
     expect(res.status).toEqual(200);
   });
+
+  it('should allow a logged in user to create a post', async () => {
+    const agent = request.agent(app);
+
+    await agent.get('/api/v1/github/login/callback?code=42').redirects(1);
+
+    let res = await agent.get('/api/v1/posts');
+    expect(res.status).toEqual(200);
+
+    res = await agent.post('/api/v1/posts').send({
+      description: 'existance is pain',
+      userId: '1',
+    });
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      description: 'existance is pain',
+      userId: '1',
+      createdAt: expect.any(String),
+    });
+  });
 });
