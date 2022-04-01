@@ -42,4 +42,16 @@ describe('gitty routes', () => {
     const logout = await agent.delete('/api/v1/github/logout');
     expect(logout.body).toEqual({ message: 'you have been logged out' });
   });
+
+  it('should show a logged in user all the posts', async () => {
+    const agent = request.agent(app);
+
+    let res = await agent.get('/api/v1/posts');
+    expect(res.status).toEqual(401);
+
+    await agent.get('/api/v1/github/login/callback?code=42').redirects(1);
+
+    res = await agent.get('/api/v1/posts');
+    expect(res.status).toEqual(200);
+  });
 });
