@@ -53,6 +53,20 @@ describe('gitty routes', () => {
 
     res = await agent.get('/api/v1/posts');
     expect(res.status).toEqual(200);
+    expect(res.body).toEqual([
+      {
+        id: expect.any(String),
+        description: 'beets, bears, battlestar galactica',
+        createdAt: expect.any(String),
+        userId: null,
+      },
+      {
+        id: expect.any(String),
+        description: 'straws, streisand, star wars',
+        createdAt: expect.any(String),
+        userId: null,
+      },
+    ]);
   });
 
   it('should allow a logged in user to create a post', async () => {
