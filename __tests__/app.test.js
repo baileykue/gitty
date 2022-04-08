@@ -75,4 +75,14 @@ describe('gitty routes', () => {
       createdAt: expect.any(String),
     });
   });
+
+  it('should get all the quotes', async () => {
+    const res = await request(app).get('/api/v1/quotes');
+
+    expect(res.body).toEqual([
+      { author: expect.any(String), content: expect.any(String) },
+      { author: expect.any(String), content: expect.any(String) },
+      { author: expect.any(String), content: expect.any(String) },
+    ]);
+  });
 });
